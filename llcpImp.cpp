@@ -244,3 +244,65 @@ void ListClear(Node*& headPtr, int noMsg)
 }
 
 // definition of MakeDistinctPairs of Assignment 5 Part 1
+void MakeDistinctPairs(Node*& head)
+{
+   if (head == 0)
+      return;
+
+   Node* first = head, *curr = head->link, *prev = head;
+   bool found = false;
+
+   while (first != 0)
+   {
+      while(curr != 0)
+      {
+         // Check if the next node matches the first
+         if (first->data == curr->data && first->link == curr)
+         {
+            found = true;
+            prev = curr;
+            curr = curr->link;
+            continue;
+         }
+         // We found the first duplicate
+         if (first->data == curr->data && found == false)
+         {
+            found = true;
+            //detach and replace
+            prev->link = curr->link;
+            curr->link = first->link;
+            first->link = curr;
+            curr = prev->link;
+            continue;
+         }
+         // We found an extra duplicate
+         if (first->data == curr->data && found == true)
+         {
+            //delete
+            prev->link = curr->link;
+            delete curr;
+            curr = prev->link;
+            continue;
+         }
+         // increment so we can check the next element
+         prev = curr;
+         curr = curr->link;
+      }
+      // Since there's no existing duplicate, make one
+      if (!found)
+      {
+         Node* newNode = new Node;
+         newNode->data = first->data;
+         newNode->link = first->link;
+         first->link = newNode;
+      }
+      first = first->link->link;
+      found = false;
+      // If we have not matched all elements, keep going
+      if (first != 0)
+      {
+         prev = first;
+         curr = first->link;
+      }
+   }
+}
